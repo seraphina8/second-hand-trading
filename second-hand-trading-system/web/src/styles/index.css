@@ -1,0 +1,12 @@
+
+.common-table thead {
+    color: #000000;
+}
+
+.component-wrapper .table .table-header {
+    background-color: #f0f2f5 !important;
+}
+
+body {
+    overflow: auto !important;
+}
