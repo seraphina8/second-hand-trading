@@ -128,7 +128,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         SysUser sysUser = getById(user.getId());
         if (sysUser != null) {
             LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
-            queryWrapper.eq(SysUser::getPassword, SecureUtil.md5(dto.getPassword() + sysUser.getSalt()));
+            queryWrapper.eq(SysUser::getPassword, dto.getPassword() );
             SysUser currentUser = getOne(queryWrapper);
             if (currentUser != null) {
                 //重新生成盐值
@@ -164,8 +164,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if (userInfo == null) {
             throw new CustomException("用户不存在");
         }
-        String salt = userInfo.getSalt();
-        if (!SecureUtil.md5(userLoginDTO.getPassword() + salt).equals(userInfo.getPassword())) {
+        System.out.println("===============");
+        System.out.println(SecureUtil.md5(userLoginDTO.getPassword() + userInfo.getSalt()));
+        System.out.println();
+        if (!userLoginDTO.getPassword().equals(userInfo.getPassword())) {
             throw new CustomException("密码错误");
         }
         return login(userInfo);
@@ -226,7 +228,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         String salt = Utils.salt();
         sysUser.setSalt(salt);
         //密码加密
-        sysUser.setPassword(SecureUtil.md5(newPassword + salt));
+        sysUser.setPassword(newPassword);
     }
 
 
