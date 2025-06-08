@@ -32,6 +32,16 @@
 <script>
 import SmsCode from "@/components/SmsCode.vue";
 
+// 定义手机号验证规则
+const validateMobile = (rule, value, callback) => {
+  const reg = /^1[3-9]\d{9}$/;
+  if (value && !reg.test(value)) {
+    callback(new Error('请输入有效的手机号'));
+  } else {
+    callback();
+  }
+};
+
 export default {
   components: {
     SmsCode
@@ -46,9 +56,11 @@ export default {
       rules: {
         password: [
           {required: true, message: '请输入密码', trigger: 'blur'},
+          {min: 6, message: '密码不能少于 6 位', trigger: 'blur'} // 添加密码长度验证规则
         ],
         mobile: [
           {required: true, message: '请输入手机号', trigger: 'blur'},
+          {validator: validateMobile, trigger: 'blur'}
         ],
         smsCode: [
           {required: true, message: '请输入短信验证码', trigger: 'blur'},

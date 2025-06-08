@@ -37,8 +37,14 @@ export default {
                 newPassword: '',
             },
             rulesList: {
-                password: [{required: true, message: '密码不能为空', trigger: 'blur'}],
-                newPassword: [{required: true, message: '新密码不能为空', trigger: 'blur'}],
+                password: [
+                    {required: true, message: '密码不能为空', trigger: 'blur'},
+                    {min: 6, message: '密码不能少于 6 位', trigger: 'blur'}
+                ],
+                newPassword: [
+                    {required: true, message: '新密码不能为空', trigger: 'blur'},
+                    {min: 6, message: '新密码不能少于 6 位', trigger: 'blur'}
+                ],
             },
         }
     },
@@ -65,4 +71,5 @@ export default {
     }
 };
 </script>
+<mcfile name="editPassword.vue" path="d:\STUDY-SECOND\second-hand-trading-system\web\src\views\editPassword.vue"></mcfile>
 

@@ -105,8 +105,23 @@ export default {
     },
     //搜索
     handleSearch() {
-      this.pageInfo.pageNum = 1
-      this.getList()
+      const isAllEmpty = Object.values(this.searchForm).every(value => {
+        if (typeof value === 'string') {
+          return value.trim() === '';
+        }
+        if (Array.isArray(value)) {
+          return value.length === 0;
+        }
+        return !value;
+      });
+
+      if (isAllEmpty) {
+        this.$message.error('搜索条件不能全为空');
+        return;
+      }
+
+      this.pageInfo.pageNum = 1;
+      this.getList();
     },
     selectionChange(rows) {
       this.selectionRows = rows

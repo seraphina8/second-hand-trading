@@ -66,6 +66,26 @@
 import utils from "@/utils/utils";
 import MyUpLoad from "@/components/MyUpload.vue";
 
+// 定义邮箱验证规则
+const validateEmail = (rule, value, callback) => {
+  const reg = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (value && !reg.test(value)) {
+    callback(new Error('请输入有效的邮箱地址'));
+  } else {
+    callback();
+  }
+};
+
+// 定义手机号验证规则
+const validateMobile = (rule, value, callback) => {
+  const reg = /^1[3-9]\d{9}$/;
+  if (value && !reg.test(value)) {
+    callback(new Error('请输入有效的手机号'));
+  } else {
+    callback();
+  }
+};
+
 export default {
   components: {MyUpLoad},
     data() {
@@ -78,7 +98,22 @@ export default {
                 address: '',
                 content: '',
             },
-            rulesList: {},
+            rulesList: {
+                email: [
+                  { required: true, message: '请输入邮箱', trigger: 'blur' },
+                  { validator: validateEmail, trigger: 'blur' }
+                ],
+                mobile: [
+                  { required: true, message: '请输入手机号', trigger: 'blur' },
+                  { validator: validateMobile, trigger: 'blur' }
+                ],
+                address: [
+                  { required: true, message: '请输入地址', trigger: 'blur' }
+                ],
+                content: [
+                  { required: true, message: '请输入个人简介', trigger: 'blur' }
+                ]
+            },
             headers: {
                 "aaa": "12343"
             }
@@ -115,7 +150,6 @@ export default {
 }
 
 .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
     cursor: pointer;

@@ -5,7 +5,7 @@
     </div>
     <el-form ref="ruleForm" :model="from" :rules="rules" label-width="0px" size="medium" style="margin-top: 15px">
       <el-form-item label="" prop="username">
-        <el-input v-model="from.username" placeholder="用户账号">
+        <el-input v-model="from.username" placeholder="用户名">
           <template slot="prepend"><i class="el-icon-user"></i></template>
         </el-input>
       </el-form-item>
@@ -22,7 +22,12 @@
       <el-form-item label="" prop="smsCode">
         <el-input v-model="from.smsCode" placeholder="短信验证码">
           <template slot="prepend"><i class="el-icon-chat-round"></i></template>
-          <SmsCode slot="append" :mobile="from.mobile"/>
+          <SmsCode 
+            slot="append" 
+            :mobile="from.mobile" 
+            :disabled="!isMobileValid"
+            @send="handleSendSmsCode"
+          />
         </el-input>
       </el-form-item>
       <el-form-item size="large">
@@ -47,7 +52,8 @@ export default {
         username: "",
         password: "",
         mobile: "",
-        smsCode: ""
+        smsCode: "",
+        isMobileValid:""
       },
       rules: {
         username: [
@@ -55,9 +61,19 @@ export default {
         ],
         password: [
           {required: true, message: '请输入密码', trigger: 'blur'},
+          {
+            min: 6,
+            message: '密码至少需要六位',
+            trigger: 'blur'
+          }
         ],
         mobile: [
           {required: true, message: '请输入手机号', trigger: 'blur'},
+          {
+            pattern: /^1[3-9]\d{9}$/,
+            message: '请输入有效的手机号',
+            trigger: 'blur'
+          }
         ],
         smsCode: [
           {required: true, message: '请输入短信验证码', trigger: 'blur'},
@@ -65,7 +81,35 @@ export default {
       }
     }
   },
+  watch: {
+    'from.mobile': function(newValue) {
+      const mobileRule = this.rules.mobile.find(rule => rule.pattern);
+      if (mobileRule) {
+        this.isMobileValid = mobileRule.pattern.test(newValue);
+      }
+    }
+  },
   methods: {
+    handleSendSmsCode() {
+      const mobileRule = this.rules.mobile.find(rule => rule.pattern);
+      if (mobileRule && !mobileRule.pattern.test(this.from.mobile)) {
+        this.$message.error('请输入有效的手机号');
+        return;
+      }
+
+      this.request.post('/sysUser/sendSmsCode', { mobile: this.from.mobile })
+        .then(response => {
+          if (response.code === 200) {
+            this.$message.success('验证码已发送，请查收');
+          } else {
+            this.$message.error('验证码发送失败，请重试');
+          }
+        })
+        .catch(error => {
+          console.error('发送验证码请求出错:', error);
+          this.$message.error('验证码发送失败，请重试');
+        });
+    },
     submitForm() {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {

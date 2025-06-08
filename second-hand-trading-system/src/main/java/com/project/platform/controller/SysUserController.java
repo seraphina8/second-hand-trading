@@ -72,7 +72,7 @@ public class SysUserController {
      * 数据更新
      */
     @ApiOperation(value = "数据更新", notes = "数据更新")
-    @PutMapping()
+    @PutMapping("/update")
     public Result update(@Validated @RequestBody SysUser entity) {
         service.updateById(entity);
         return new Result<>().success();

@@ -63,7 +63,7 @@ public class ShippingAddressController {
      * 数据新增
      */
     @ApiOperation(value = "数据新增", notes = "数据新增")
-    @PostMapping()
+    @PostMapping("/add")
     public Result add(@Validated @RequestBody ShippingAddress entity) {
         service.save(entity);
         return new Result<>().success();
@@ -73,7 +73,7 @@ public class ShippingAddressController {
      * 数据更新
      */
     @ApiOperation(value = "数据更新", notes = "数据更新")
-    @PutMapping()
+    @PutMapping("/update")
     public Result update(@Validated @RequestBody ShippingAddress entity) {
         service.updateById(entity);
         return new Result<>().success();

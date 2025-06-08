@@ -166,6 +166,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
         String salt = userInfo.getSalt();
         if (!SecureUtil.md5(userLoginDTO.getPassword() + salt).equals(userInfo.getPassword())) {
+//            String inputEncryptedPassword = SecureUtil.md5(userLoginDTO.getPassword() + salt);
+//            System.out.println("登录时明文密码: " + userLoginDTO.getPassword());
+//            System.out.println("登录时盐值: " + salt);
+//            System.out.println("登录时加密后的密码: " + inputEncryptedPassword);
+//            System.out.println("数据库中存储的加密密码: " + userInfo.getPassword());
             throw new CustomException("密码错误");
         }
         return login(userInfo);
@@ -226,6 +231,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         String salt = Utils.salt();
         sysUser.setSalt(salt);
         //密码加密
+//        String encryptedPassword = SecureUtil.md5(newPassword + salt);
+//        System.out.println("注册时明文密码: " + newPassword);
+//        System.out.println("注册时盐值: " + salt);
+//        System.out.println("注册时加密后的密码: " + encryptedPassword);
         sysUser.setPassword(SecureUtil.md5(newPassword + salt));
     }
 

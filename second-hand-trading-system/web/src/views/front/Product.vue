@@ -1,7 +1,7 @@
 <template>
   <div>
 
-      <el-form ref="searchForm" :model="searchForm" inline>
+      <el-form ref="searchForm" :model="searchForm" :rules="searchRules" inline>
         <el-form-item label="标题" prop="name">
           <el-input v-model="searchForm.name"></el-input>
         </el-form-item>
@@ -83,7 +83,19 @@ export default {
       productFinenessIdList: [],
       statusList: [{name: '上架', id: 1}, {name: '下架', id: 2}, {name: '已卖出', id: 3}],
 
-      formData: {}
+      formData: {},
+      // 将 searchRules 插入到这里
+      searchRules: {
+        name: [
+          { required: true, message: '标题不能为空', trigger: 'blur' }
+        ],
+        content: [
+          { required: true, message: '说明不能为空', trigger: 'blur' }
+        ],
+        productFinenessId: [
+          { required: true, message: '请选择成色', trigger: 'change' }
+        ]
+      }
     }
   },
 
@@ -143,8 +155,25 @@ export default {
     },
     //搜索
     handleSearch() {
-      this.pageInfo.pageNum = 1
-      this.getList()
+      // 排除 status 字段后检查是否所有字段都为空
+      const { status, ...searchParams } = this.searchForm;
+      const isAllEmpty = Object.values(searchParams).every(value => {
+        if (typeof value === 'string') {
+          return value.trim() === '';
+        }
+        if (Array.isArray(value)) {
+          return value.length === 0;
+        }
+        return !value;
+      });
+
+      if (isAllEmpty) {
+        this.$message.error('搜索条件不能全为空');
+        return;
+      }
+
+      this.pageInfo.pageNum = 1;
+      this.getList();
     },
     handleTypeClick(tab, event) {
       this.getList()

@@ -3,7 +3,7 @@
 
     <div class="about">
         <h1>校园二手交易平台</h1>
-        <div>打造最好的二手交易平台</div>
+        <div>更实惠，更高效，更安全</div>
     </div>
     </div>
 </template>

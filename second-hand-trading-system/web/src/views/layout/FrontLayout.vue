@@ -18,7 +18,7 @@
                   <el-menu :default-active="$route.path" class="el-menu-demo" mode="horizontal" router
                            @select="handleSelect">
                     <el-menu-item index="/front/index">首页</el-menu-item>
-                    <el-menu-item index="/front/product">海鲜市场</el-menu-item>
+                    <el-menu-item index="/front/product">二手市场</el-menu-item>
                     <el-menu-item index="/front/tOrder">我买到的</el-menu-item>
                     <el-menu-item index="/front/personalCenter">个人中心</el-menu-item>
                     <el-menu-item index="/front/about">关于我们</el-menu-item>

@@ -78,15 +78,16 @@
         :wrapper-closable="false"
     >
       <div class="demo-drawer_content common-drawer" style="padding-right: 40px;box-sizing: border-box">
-        <el-form :model="formData" label-width="100px" class="demo-ruleForm">
+        <!-- 确保 ref 属性名和代码里引用的一致 -->
+        <el-form ref="formData" :model="formData" :rules="rules" label-width="100px" class="demo-ruleForm">
           <slot name="content">
-            <el-form-item label="收货人">
+            <el-form-item label="收货人" prop="name">
               <el-input v-model="formData.name"></el-input>
             </el-form-item>
-            <el-form-item label="电话">
+            <el-form-item label="电话" prop="tel">
               <el-input v-model="formData.tel"></el-input>
             </el-form-item>
-            <el-form-item label="地址">
+            <el-form-item label="地址" prop="address">
               <el-input type="textarea" rows="10" v-model="formData.address"></el-input>
             </el-form-item>
             <el-form-item label="默认地址">
@@ -105,6 +106,18 @@
 
 <script>
 import AdminPage from "@/views/layout/AdminPage.vue";
+
+// 定义电话验证规则
+const validateTel = (rule, value, callback) => {
+  const reg = /^1[3-9]\d{9}$/;
+  if (!value) {
+    callback(new Error('电话不能为空'));
+  } else if (!reg.test(value)) {
+    callback(new Error('请输入有效的手机号'));
+  } else {
+    callback();
+  }
+};
 
 export default {
   components: {
@@ -130,7 +143,20 @@ export default {
       selectionRows: [],
       isDefaultList: [{name: '是', id: 1}, {name: '否', id: 0}],
 
-      formData: {}
+      formData: {},
+      rules: {
+        name: [
+          { required: true, message: '收货人不能为空', trigger: 'blur' },
+          { max: 20, message: '收货人长度不能超过 20 个字符', trigger: 'blur' }
+        ],
+        tel: [
+          { validator: validateTel, trigger: 'blur' }
+        ],
+        address: [
+          { required: true, message: '地址不能为空', trigger: 'blur' },
+          { max: 200, message: '地址长度不能超过 200 个字符', trigger: 'blur' }
+        ]
+      }
     }
   },
 
@@ -168,30 +194,38 @@ export default {
     },
     //提交数据
     submit() {
-      //新增
-      if (this.formData.id === undefined) {
-        this.request.post("/shippingAddress", this.formData).then(res => {
-          if (res.code === 200) {
-            this.isDrawerDialog = false
-            this.$message({
-              message: res.msg,
-              type: 'success'
-            });
-            this.getList()
+      if (this.$refs['formData']) {
+        this.$refs['formData'].validate((valid) => {
+          if (valid) {
+            // 新增
+            if (this.formData.id === undefined) {
+              this.request.post("/shippingAddress/add", this.formData).then(res => {
+                if (res.code === 200) {
+                  this.isDrawerDialog = false
+                  this.$message({
+                    message: res.msg,
+                    type: 'success'
+                  });
+                  this.getList()
+                }
+              })
+            } else {
+              // 更新
+              this.request.put("/shippingAddress/update", this.formData).then(res => {
+                if (res.code === 200) {
+                  this.isDrawerDialog = false
+                  this.$message({
+                    message: res.msg,
+                    type: 'success'
+                  });
+                  this.getList()
+                }
+              })
+            }
           }
-        })
+        });
       } else {
-        //更新
-        this.request.put("/shippingAddress", this.formData).then(res => {
-          if (res.code === 200) {
-            this.isDrawerDialog = false
-            this.$message({
-              message: res.msg,
-              type: 'success'
-            });
-            this.getList()
-          }
-        })
+        console.error('表单引用未正确绑定，请检查 ref 属性');
       }
     },
     //添加数据
