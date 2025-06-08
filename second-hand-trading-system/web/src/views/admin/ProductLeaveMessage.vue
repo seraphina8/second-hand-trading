@@ -190,7 +190,7 @@ export default {
         center: true
       }).then(() => {
         //批量删除数据
-        this.request.delete("/productLeaveMessage", {data: ids}).then(res => {
+        this.request.delete("/productLeaveMessage/delete", {data: ids}).then(res => {
           if (res.code === 200) {
             this.$message({
               message: res.msg,

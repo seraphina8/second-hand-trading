@@ -71,7 +71,7 @@ public class ProductLeaveMessageController {
      * 数据新增
      */
     @ApiOperation(value = "数据新增", notes = "数据新增")
-    @PostMapping()
+    @PostMapping("/add")
     public Result add(@Validated @RequestBody ProductLeaveMessage entity) {
         service.save(entity);
         return new Result<>().success();
@@ -81,7 +81,7 @@ public class ProductLeaveMessageController {
      * 数据更新
      */
     @ApiOperation(value = "数据更新", notes = "数据更新")
-    @PutMapping()
+    @PutMapping("/update")
     public Result update(@Validated @RequestBody ProductLeaveMessage entity) {
         service.updateById(entity);
         return new Result<>().success();
@@ -91,7 +91,7 @@ public class ProductLeaveMessageController {
      * 根据id删除
      */
     @ApiOperation(value = "数据根据id批量删除", notes = "数据根据id批量删除")
-    @DeleteMapping()
+    @DeleteMapping("/delete")
     public Result delBatch(@RequestBody List<Integer> ids) {
         service.removeByIds(ids);
         return new Result<>().success();

@@ -53,12 +53,23 @@
       <div style="margin: 10px 0"> {{ info.content }}</div>
 
       <div class="gallery">
-        <div class="gallery-item" v-for="(item, index) in  Utils.getFileInfo(info.img)" :key="index">
+        <!-- 图片部分修改前 -->
+        <!-- <div class="gallery-item" v-for="(item, index) in  Utils.getFileInfo(info.img)" :key="index">
           <el-image :src="item.url" fit="cover" :preview-src-list="[item.url]" style="height: 100%;width: 100%"></el-image>
+        </div> -->
+        <!-- 图片部分修改后 -->
+        <div class="gallery-item" v-for="(item, index) in  Utils.getFileInfo(info.img)" :key="index">
+          <el-image v-if="item?.url" :src="item.url" fit="cover" :preview-src-list="[item.url]" style="height: 100%;width: 100%"></el-image>
         </div>
-        <div class="gallery-item" v-for="(item, index) in  Utils.getFileInfo(info.video)" :key="index">
-
+        <!-- 视频部分修改前 -->
+        <!-- <div class="gallery-item" v-for="(item, index) in  Utils.getFileInfo(info.video)" :key="index">
           <video width="320" height="240" controls loop muted>
+            <source :src="item.url">
+          </video>
+        </div> -->
+        <!-- 视频部分修改后 -->
+        <div class="gallery-item" v-for="(item, index) in  Utils.getFileInfo(info.video)" :key="index">
+          <video v-if="item?.url" width="320" height="240" controls loop muted>
             <source :src="item.url">
           </video>
         </div>
@@ -80,7 +91,10 @@
 
       <el-card :body-style="{ padding: '0px', marginBottom: '1px'}">
         <div style="float: left;margin: 10px;height: 100%">
-          <el-avatar :src=" Utils.getFileInfo(item.userAvatarUrl)[0].url "></el-avatar>
+          <!-- 修改前 -->
+          <!-- <el-avatar :src=" Utils.getFileInfo(item.userAvatarUrl)[0].url "></el-avatar> -->
+          <!-- 修改后 -->
+          <el-avatar :src=" Utils.getFileInfo(item.userAvatarUrl)[0]?.url "></el-avatar>
         </div>
         <div style="padding: 14px;">
           <span>{{ item.userName }}</span>
@@ -227,7 +241,7 @@ export default {
       this.loadProductLeaveMessage()
     },
     saveProductLeaveMessage() {
-      this.request.post("/productLeaveMessage", {content: this.productLeaveMessage.content, productId: this.id}).then(res => {
+      this.request.post("/productLeaveMessage/add", {content: this.productLeaveMessage.content, productId: this.id}).then(res => {
         if (res.code === 200) {
           this.$message.success("评论成功")
           this.loadProductLeaveMessage()
@@ -236,8 +250,9 @@ export default {
         }
       })
     },
+
     deleteProductFavorite(productLeaveMessageId) {
-      this.request.delete("/productLeaveMessage/" + productLeaveMessageId).then(res => {
+      this.request.delete("/productLeaveMessage/delete" + productLeaveMessageId).then(res => {
         if (res.code === 200) {
           this.$message.success("删除成功")
           this.loadProductLeaveMessage()
@@ -246,6 +261,18 @@ export default {
         }
       })
     },
+
+    // deleteProductFavorite() {
+    //   this.request.delete("/productLeaveMessage/delete",{productLeaveMessageId: }).then(res => {
+    //     if (res.code === 200) {
+    //       this.$message.success("删除成功")
+    //       this.loadProductLeaveMessage()
+    //     } else {
+    //       this.$message.error(res.msg)
+    //     }
+    //   })
+    // },
+
     saveProductFavorite() {
       this.request.post("/productFavorite", {productId: this.id}).then(res => {
         if (res.code === 200) {
